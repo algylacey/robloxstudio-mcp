@@ -1,7 +1,7 @@
 <roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
 	<External>null</External>
 	<External>nil</External>
-	<Item class="Script" referent="RBX52D86AAF2C054E469C9D99447CDBC64D">
+	<Item class="Script" referent="RBX91DA8FC31CC84F2298F74E8208924E33">
 		<Properties>
 			<ProtectedString name="Source"><![CDATA[local HttpService = game:GetService("HttpService")
 local StudioService = game:GetService("StudioService")
@@ -291,35 +291,35 @@ stepsLayout.SortOrder = Enum.SortOrder.LayoutOrder
 stepsLayout.Parent = stepsFrame
 
 local function createStepRow(text)
-    local row = Instance.new("Frame")
-    row.Size = UDim2.new(1, 0, 0, 16)
-    row.BackgroundTransparency = 1
+	local row = Instance.new("Frame")
+	row.Size = UDim2.new(1, 0, 0, 16)
+	row.BackgroundTransparency = 1
 
-    local dot = Instance.new("Frame")
-    dot.Size = UDim2.new(0, 10, 0, 10)
-    dot.Position = UDim2.new(0, 0, 0, 3)
-    dot.BackgroundColor3 = Color3.fromRGB(156, 163, 175)
-    dot.BorderSizePixel = 0
-    dot.Parent = row
+	local dot = Instance.new("Frame")
+	dot.Size = UDim2.new(0, 10, 0, 10)
+	dot.Position = UDim2.new(0, 0, 0, 3)
+	dot.BackgroundColor3 = Color3.fromRGB(156, 163, 175)
+	dot.BorderSizePixel = 0
+	dot.Parent = row
 
-    local dotCorner = Instance.new("UICorner")
-    dotCorner.CornerRadius = UDim.new(1, 0)
-    dotCorner.Parent = dot
+	local dotCorner = Instance.new("UICorner")
+	dotCorner.CornerRadius = UDim.new(1, 0)
+	dotCorner.Parent = dot
 
-    local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, -18, 1, 0)
-    label.Position = UDim2.new(0, 18, 0, 0)
-    label.BackgroundTransparency = 1
-    label.Text = text
-    label.TextColor3 = Color3.fromRGB(209, 213, 219)
-    label.TextScaled = false
-    label.TextSize = 11
-    label.Font = Enum.Font.Jura
-    label.TextXAlignment = Enum.TextXAlignment.Left
-    label.Parent = row
+	local label = Instance.new("TextLabel")
+	label.Size = UDim2.new(1, -18, 1, 0)
+	label.Position = UDim2.new(0, 18, 0, 0)
+	label.BackgroundTransparency = 1
+	label.Text = text
+	label.TextColor3 = Color3.fromRGB(209, 213, 219)
+	label.TextScaled = false
+	label.TextSize = 11
+	label.Font = Enum.Font.Jura
+	label.TextXAlignment = Enum.TextXAlignment.Left
+	label.Parent = row
 
-    row.Parent = stepsFrame
-    return row, dot, label
+	row.Parent = stepsFrame
+	return row, dot, label
 end
 
 local step1Row, step1Dot, step1Label = createStepRow("1. HTTP server reachable")
@@ -381,7 +381,7 @@ local function createPulseAnimation()
 		end)
 		pulseAnimation = nil
 	end
-	
+
 	pcall(function()
 		pulseAnimation = TweenService:Create(statusPulse, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
 			Size = UDim2.new(0, 24, 0, 24),
@@ -389,7 +389,7 @@ local function createPulseAnimation()
 			BackgroundTransparency = 1
 		})
 	end)
-	
+
 	return pulseAnimation
 end
 
@@ -572,7 +572,7 @@ local function pollForRequests()
 		pluginState.lastHttpOk = true
 		step1Dot.BackgroundColor3 = Color3.fromRGB(34, 197, 94)
 		step1Label.Text = "1. HTTP server reachable (OK)"
-		
+
 		if mcpConnected and not statusLabel.Text:find("Connected") then
 			statusLabel.Text = "Connected"
 			statusLabel.TextColor3 = Color3.fromRGB(34, 197, 94)
@@ -679,7 +679,7 @@ local function pollForRequests()
 			troubleshootLabel.Visible = false
 			startPulseAnimation()
 		end
-end
+	end
 end
 
 sendResponse = function(requestId, responseData)
@@ -748,14 +748,14 @@ processRequest = function(request)
 		return handlers.getScriptSource(data)
 	elseif endpoint == "/api/set-script-source" then
 		return handlers.setScriptSource(data)
-	-- Partial script editing endpoints
+		-- Partial script editing endpoints
 	elseif endpoint == "/api/edit-script-lines" then
 		return handlers.editScriptLines(data)
 	elseif endpoint == "/api/insert-script-lines" then
 		return handlers.insertScriptLines(data)
 	elseif endpoint == "/api/delete-script-lines" then
 		return handlers.deleteScriptLines(data)
-	-- Attribute endpoints
+		-- Attribute endpoints
 	elseif endpoint == "/api/get-attribute" then
 		return handlers.getAttribute(data)
 	elseif endpoint == "/api/set-attribute" then
@@ -764,7 +764,7 @@ processRequest = function(request)
 		return handlers.getAttributes(data)
 	elseif endpoint == "/api/delete-attribute" then
 		return handlers.deleteAttribute(data)
-	-- Tag endpoints
+		-- Tag endpoints
 	elseif endpoint == "/api/get-tags" then
 		return handlers.getTags(data)
 	elseif endpoint == "/api/add-tag" then
@@ -773,7 +773,7 @@ processRequest = function(request)
 		return handlers.removeTag(data)
 	elseif endpoint == "/api/get-tagged" then
 		return handlers.getTagged(data)
-	-- Selection endpoints
+		-- Selection endpoints
 	elseif endpoint == "/api/get-selection" then
 		return handlers.getSelection(data)
 	else
@@ -1492,7 +1492,7 @@ handlers.createObject = function(requestData)
 
 	local success, newInstance = pcall(function()
 		local instance = Instance.new(className)
-		
+
 		if name then
 			instance.Name = name
 		end
@@ -1583,7 +1583,7 @@ handlers.massSetProperty = function(requestData)
 			local success, err = pcall(function()
 				instance[propertyName] = propertyValue
 			end)
-			
+
 			if success then
 				successCount = successCount + 1
 				table.insert(results, {
@@ -1640,7 +1640,7 @@ handlers.massGetProperty = function(requestData)
 			local success, value = pcall(function()
 				return instance[propertyName]
 			end)
-			
+
 			if success then
 				table.insert(results, {
 					path = path,
@@ -1861,7 +1861,7 @@ handlers.smartDuplicate = function(requestData)
 	for i = 1, count do
 		local success, newInstance = pcall(function()
 			local clone = instance:Clone()
-			
+
 			if options.namePattern then
 				clone.Name = options.namePattern:gsub("{n}", tostring(i))
 			else
@@ -1970,7 +1970,7 @@ handlers.massDuplicate = function(requestData)
 	for _, duplication in ipairs(duplications) do
 		local result = handlers.smartDuplicate(duplication)
 		table.insert(allResults, result)
-		
+
 		if result.summary then
 			totalSuccess = totalSuccess + result.summary.succeeded
 			totalFailures = totalFailures + result.summary.failed
@@ -1992,11 +1992,11 @@ handlers.massDuplicate = function(requestData)
 end
 
 local function evaluateFormula(formula, variables, instance, index)
-	
+
 	local value = formula
-	
+
 	value = value:gsub("index", tostring(index))
-	
+
 	if instance and instance:IsA("BasePart") then
 		local pos = instance.Position
 		local size = instance.Size
@@ -2008,47 +2008,47 @@ local function evaluateFormula(formula, variables, instance, index)
 		value = value:gsub("Size%.Z", tostring(size.Z))
 		value = value:gsub("magnitude", tostring(pos.magnitude))
 	end
-	
+
 	if variables then
 		for k, v in pairs(variables) do
 			value = value:gsub(k, tostring(v))
 		end
 	end
-	
+
 	value = value:gsub("sin%(([%d%.%-]+)%)", function(x) return tostring(math.sin(tonumber(x) or 0)) end)
 	value = value:gsub("cos%(([%d%.%-]+)%)", function(x) return tostring(math.cos(tonumber(x) or 0)) end)
 	value = value:gsub("sqrt%(([%d%.%-]+)%)", function(x) return tostring(math.sqrt(tonumber(x) or 0)) end)
 	value = value:gsub("abs%(([%d%.%-]+)%)", function(x) return tostring(math.abs(tonumber(x) or 0)) end)
 	value = value:gsub("floor%(([%d%.%-]+)%)", function(x) return tostring(math.floor(tonumber(x) or 0)) end)
 	value = value:gsub("ceil%(([%d%.%-]+)%)", function(x) return tostring(math.ceil(tonumber(x) or 0)) end)
-	
+
 	local result = tonumber(value)
 	if result then
 		return result, nil
 	end
-	
+
 	local success, evalResult = pcall(function()
-		
+
 		local num = tonumber(value)
 		if num then
 			return num
 		end
-		
+
 		local a, b = value:match("^([%d%.%-]+)%s*%*%s*([%d%.%-]+)$")
 		if a and b then
 			return (tonumber(a) or 0) * (tonumber(b) or 0)
 		end
-		
+
 		a, b = value:match("^([%d%.%-]+)%s*%+%s*([%d%.%-]+)$")
 		if a and b then
 			return (tonumber(a) or 0) + (tonumber(b) or 0)
 		end
-		
+
 		a, b = value:match("^([%d%.%-]+)%s*%-%s*([%d%.%-]+)$")
 		if a and b then
 			return (tonumber(a) or 0) - (tonumber(b) or 0)
 		end
-		
+
 		a, b = value:match("^([%d%.%-]+)%s*/%s*([%d%.%-]+)$")
 		if a and b then
 			local divisor = tonumber(b) or 1
@@ -2056,10 +2056,10 @@ local function evaluateFormula(formula, variables, instance, index)
 				return (tonumber(a) or 0) / divisor
 			end
 		end
-		
+
 		error("Unsupported formula pattern: " .. value)
 	end)
-	
+
 	if success and type(evalResult) == "number" then
 		return evalResult, nil
 	else
@@ -2085,12 +2085,12 @@ handlers.setCalculatedProperty = function(requestData)
 		local instance = getInstanceByPath(path)
 		if instance then
 			local value, evalError = evaluateFormula(formula, variables, instance, index)
-			
+
 			if value ~= nil and not evalError then
 				local success, err = pcall(function()
 					instance[propertyName] = value
 				end)
-				
+
 				if success then
 					successCount = successCount + 1
 					table.insert(results, {
@@ -2166,7 +2166,7 @@ handlers.setRelativeProperty = function(requestData)
 				if component and typeof(currentValue) == "Vector3" then
 					local x, y, z = currentValue.X, currentValue.Y, currentValue.Z
 					local targetValue = value
-					
+
 					if component == "X" then
 						if operation == "add" then x = x + targetValue
 						elseif operation == "subtract" then x = x - targetValue
@@ -2189,11 +2189,11 @@ handlers.setRelativeProperty = function(requestData)
 						elseif operation == "power" then z = z ^ targetValue
 						end
 					end
-					
+
 					newValue = Vector3.new(x, y, z)
 				elseif typeof(currentValue) == "Color3" and typeof(value) == "Color3" then
 					local r, g, b = currentValue.R, currentValue.G, currentValue.B
-					
+
 					if operation == "add" then
 						newValue = Color3.new(
 							math.min(1, r + value.R),
@@ -2223,7 +2223,7 @@ handlers.setRelativeProperty = function(requestData)
 					end
 				elseif typeof(currentValue) == "Vector3" and type(value) == "number" then
 					local x, y, z = currentValue.X, currentValue.Y, currentValue.Z
-					
+
 					if operation == "add" then
 						newValue = Vector3.new(x + value, y + value, z + value)
 					elseif operation == "subtract" then
@@ -2242,7 +2242,7 @@ handlers.setRelativeProperty = function(requestData)
 				instance[propertyName] = newValue
 				return newValue
 			end)
-			
+
 			if success then
 				successCount = successCount + 1
 				table.insert(results, {
@@ -2492,8 +2492,8 @@ handlers.setScriptSource = function(requestData)
 	else
 		return {
 			error = "Failed to set script source. UpdateSourceAsync failed: " .. tostring(updateResult) ..
-			        ". Direct assignment failed: " .. tostring(directResult) ..
-			        ". Replace method failed: " .. tostring(replaceResult)
+				". Direct assignment failed: " .. tostring(directResult) ..
+				". Replace method failed: " .. tostring(replaceResult)
 		}
 	end
 end
@@ -3062,7 +3062,7 @@ end
 -- Selection handlers
 handlers.getSelection = function(requestData)
 	local selection = Selection:Get()
-	
+
 	if #selection == 0 then
 		return {
 			success = true,
@@ -3071,7 +3071,7 @@ handlers.getSelection = function(requestData)
 			message = "No objects selected"
 		}
 	end
-	
+
 	local selectedObjects = {}
 	for _, instance in ipairs(selection) do
 		table.insert(selectedObjects, {
@@ -3081,7 +3081,7 @@ handlers.getSelection = function(requestData)
 			parent = instance.Parent and getInstancePath(instance.Parent) or nil
 		})
 	end
-	
+
 	return {
 		success = true,
 		selection = selectedObjects,
@@ -3116,12 +3116,12 @@ local function updateUIState()
 		step3Label.Text = "3. Ready for commands (connecting...)"
 		pluginState.mcpWaitStartTime = nil
 		troubleshootLabel.Visible = false
-		
+
 		if not buttonHover then
 			connectButton.BackgroundColor3 = Color3.fromRGB(239, 68, 68)
 		end
-		
-		
+
+
 		urlInput.TextEditable = false
 		urlInput.BackgroundColor3 = Color3.fromRGB(55, 65, 81)
 		urlInput.BorderColor3 = Color3.fromRGB(75, 85, 99)
@@ -3146,12 +3146,12 @@ local function updateUIState()
 		step3Label.Text = "3. Ready for commands (offline)"
 		pluginState.mcpWaitStartTime = nil
 		troubleshootLabel.Visible = false
-		
+
 		if not buttonHover then
 			connectButton.BackgroundColor3 = Color3.fromRGB(16, 185, 129)
 		end
-		
-		
+
+
 		urlInput.TextEditable = true
 		urlInput.BackgroundColor3 = Color3.fromRGB(55, 65, 81)
 		urlInput.BorderColor3 = Color3.fromRGB(99, 102, 241)
@@ -3215,7 +3215,7 @@ local function deactivatePlugin()
 		pluginState.connection:Disconnect()
 		pluginState.connection = nil
 	end
-	
+
 	pluginState.consecutiveFailures = 0
 	pluginState.currentRetryDelay = 0.5
 end
@@ -3241,7 +3241,7 @@ updateUIState()
 			<bool name="Disabled">false</bool>
 			<Content name="LinkedSource"><null></null></Content>
 			<token name="RunContext">0</token>
-			<string name="ScriptGuid">{A3844B96-6238-4336-B55B-55E8284F81E7}</string>
+			<string name="ScriptGuid">{A3D0AD89-2E27-4747-90E9-3F5D15F7E0F9}</string>
 			<BinaryString name="AttributesSerialize"></BinaryString>
 			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 			<bool name="DefinesCapabilities">false</bool>
