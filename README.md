@@ -36,7 +36,7 @@ Plugin shows "Connected" when ready.
   "mcpServers": {
     "robloxstudio-mcp": {
       "command": "npx",
-      "args": ["-y", "robloxstudio-mcp"]
+      "args": ["-y", "robloxstudio-mcp@latest"]
     }
   }
 }
