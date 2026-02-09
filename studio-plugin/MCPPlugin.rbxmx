@@ -512,6 +512,21 @@ local function joinLines(lines, hadTrailingNewline)
 	return source
 end
 
+-- Read script source, preferring draft content from ScriptEditorService when available
+local function readScriptSource(instance)
+	local ok, result = pcall(function()
+		local doc = ScriptEditorService:FindDocument(instance)
+		if doc then
+			return doc:GetText()
+		end
+		return nil
+	end)
+	if ok and result then
+		return result
+	end
+	return instance.Source
+end
+
 -- Helper to convert property values from JSON to Roblox types
 local function convertPropertyValue(instance, propertyName, propertyValue)
 	-- Handle nil
@@ -937,7 +952,7 @@ handlers.searchFiles = function(requestData)
 		elseif searchType == "type" then
 			match = instance.ClassName:lower():find(query:lower()) ~= nil
 		elseif searchType == "content" and instance:IsA("LuaSourceContainer") then
-			match = instance.Source:lower():find(query:lower()) ~= nil
+			match = readScriptSource(instance):lower():find(query:lower()) ~= nil
 		end
 
 		if match then
@@ -1154,7 +1169,7 @@ handlers.getInstanceProperties = function(requestData)
 		end
 
 		if instance:IsA("LuaSourceContainer") then
-			properties.Source = instance.Source
+			properties.Source = readScriptSource(instance)
 			if instance:IsA("BaseScript") then
 				properties.Enabled = tostring(instance.Enabled)
 			end
@@ -2473,7 +2488,7 @@ handlers.getScriptSource = function(requestData)
 	end
 
 	local success, result = pcall(function()
-		local fullSource = instance.Source
+		local fullSource = readScriptSource(instance)
 		local lines, hasTrailingNewline = splitLines(fullSource)
 		local totalLineCount = #lines
 
@@ -2579,7 +2594,7 @@ handlers.setScriptSource = function(requestData)
 	sourceToSet = sourceToSet:gsub("\\r", "\r")
 	sourceToSet = sourceToSet:gsub("\\\\", "\\")
 	local updateSuccess, updateResult = pcall(function()
-		local oldSourceLength = string.len(instance.Source)
+		local oldSourceLength = string.len(readScriptSource(instance))
 
 		ScriptEditorService:UpdateSourceAsync(instance, function(oldContent)
 			return sourceToSet
@@ -2691,7 +2706,7 @@ handlers.editScriptLines = function(requestData)
 	end
 
 	local success, result = pcall(function()
-		local lines, hadTrailingNewline = splitLines(instance.Source)
+		local lines, hadTrailingNewline = splitLines(readScriptSource(instance))
 		local totalLines = #lines
 
 		if startLine < 1 or startLine > totalLines then
@@ -2775,7 +2790,7 @@ handlers.insertScriptLines = function(requestData)
 	end
 
 	local success, result = pcall(function()
-		local lines, hadTrailingNewline = splitLines(instance.Source)
+		local lines, hadTrailingNewline = splitLines(readScriptSource(instance))
 		local totalLines = #lines
 
 		if afterLine < 0 or afterLine > totalLines then
@@ -2849,7 +2864,7 @@ handlers.deleteScriptLines = function(requestData)
 	end
 
 	local success, result = pcall(function()
-		local lines, hadTrailingNewline = splitLines(instance.Source)
+		local lines, hadTrailingNewline = splitLines(readScriptSource(instance))
 		local totalLines = #lines
 
 		if startLine < 1 or startLine > totalLines then
