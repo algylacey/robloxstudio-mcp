@@ -61,6 +61,6 @@ Ask things like: *"What's the structure of this game?"*, *"Find scripts with dep
 
 ---
 
-**v1.9.1** — 37+ tools, asset property fetching, full HTTP API, improved stability
+**v1.9.0** — 37+ tools, asset property fetching, full HTTP API, improved stability
 
-[Report Issues](https://github.com/allydevs0/robloxstudio-mcp-improved/issues) | [DevForum](https://devforum.roblox.com/t/v180-roblox-studio-mcp-speed-up-your-workflow-by-letting-ai-read-paths-and-properties/3707071) | MIT Licensed
+[Report Issues](https://github.com/boshyxd/robloxstudio-mcp/issues) | [DevForum](https://devforum.roblox.com/t/v180-roblox-studio-mcp-speed-up-your-workflow-by-letting-ai-read-paths-and-properties/3707071) | MIT Licensed
