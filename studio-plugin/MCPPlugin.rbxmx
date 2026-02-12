@@ -3051,19 +3051,16 @@ local function stopPlaytest(_requestData)
 	local _length = #_array
 	table.move(outputBuffer, 1, #outputBuffer, _length + 1, _array)
 	local output = _array
-	local ok, err = pcall(function()
-		StudioTestService:EndTest("stopped_by_mcp")
-	end)
-	if not ok then
-		return {
-			error = `Failed to stop test: {err}`,
-		}
+	if logConnection then
+		logConnection:Disconnect()
+		logConnection = nil
 	end
+	testRunning = false
 	return {
 		success = true,
 		output = output,
 		outputCount = #output,
-		message = "Playtest stopped",
+		message = "Output captured. Press Stop in Studio to end the play session.",
 	}
 end
 local function getPlaytestOutput(_requestData)
@@ -3093,7 +3090,7 @@ return {
         <Properties>
           <string name="Name">State</string>
           <string name="Source"><![CDATA[-- Compiled with roblox-ts v3.0.0
-local CURRENT_VERSION = "2.0.1"
+local CURRENT_VERSION = "2.0.2"
 local MAX_CONNECTIONS = 5
 local BASE_PORT = 58741
 local activeTabIndex = 0

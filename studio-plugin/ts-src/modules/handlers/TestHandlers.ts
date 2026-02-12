@@ -68,19 +68,18 @@ function stopPlaytest(_requestData: Record<string, unknown>) {
 	}
 
 	const output = [...outputBuffer];
-	const [ok, err] = pcall(() => {
-		StudioTestService.EndTest("stopped_by_mcp");
-	});
 
-	if (!ok) {
-		return { error: `Failed to stop test: ${err}` };
+	if (logConnection) {
+		logConnection.Disconnect();
+		logConnection = undefined;
 	}
+	testRunning = false;
 
 	return {
 		success: true,
 		output,
 		outputCount: output.size(),
-		message: "Playtest stopped",
+		message: "Output captured. Press Stop in Studio to end the play session.",
 	};
 }
 

@@ -884,7 +884,7 @@ class RobloxStudioMCPServer {
           },
           {
             name: 'stop_playtest',
-            description: 'Stop a running play test session and return all captured output.',
+            description: 'Stop capturing play test output and return all captured messages. The Studio play session must be stopped manually (click Stop in Studio).',
             inputSchema: {
               type: 'object',
               properties: {}
