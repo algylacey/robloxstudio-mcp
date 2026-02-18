@@ -591,6 +591,9 @@ class RobloxStudioMCPServer {
             }
           },
 
+          // Script tools disabled: Use ScriptSync + filesystem access instead for much lower token cost.
+          // To re-enable, uncomment the tool definitions below.
+          /*
           {
             name: 'get_script_source',
             description: 'Get the source code of a Roblox script (LocalScript, Script, or ModuleScript). Returns "source" (raw code) with startLine/endLine indicating the line range. For large scripts (>1000 lines), use startLine/endLine to read specific sections.',
@@ -631,7 +634,6 @@ class RobloxStudioMCPServer {
               required: ['instancePath', 'source']
             }
           },
-
           {
             name: 'edit_script_lines',
             description: 'Replace specific lines in a Roblox script without rewriting the entire source. IMPORTANT: Use get_script_source with startLine/endLine to identify the correct line numbers. Lines are 1-indexed and ranges are inclusive.',
@@ -703,6 +705,7 @@ class RobloxStudioMCPServer {
               required: ['instancePath', 'startLine', 'endLine']
             }
           },
+          */
 
           {
             name: 'get_attribute',
@@ -962,17 +965,20 @@ class RobloxStudioMCPServer {
           case 'set_relative_property':
             return await this.tools.setRelativeProperty((args as any)?.paths as string[], (args as any)?.propertyName as string, (args as any)?.operation, (args as any)?.value, (args as any)?.component);
 
+          // Script tool handlers disabled: Use ScriptSync + filesystem access instead.
+          // To re-enable, uncomment the cases below (and the tool definitions above).
+          /*
           case 'get_script_source':
             return await this.tools.getScriptSource((args as any)?.instancePath as string, (args as any)?.startLine, (args as any)?.endLine);
           case 'set_script_source':
             return await this.tools.setScriptSource((args as any)?.instancePath as string, (args as any)?.source as string);
-
           case 'edit_script_lines':
             return await this.tools.editScriptLines((args as any)?.instancePath as string, (args as any)?.startLine as number, (args as any)?.endLine as number, (args as any)?.newContent as string);
           case 'insert_script_lines':
             return await this.tools.insertScriptLines((args as any)?.instancePath as string, (args as any)?.afterLine as number, (args as any)?.newContent as string);
           case 'delete_script_lines':
             return await this.tools.deleteScriptLines((args as any)?.instancePath as string, (args as any)?.startLine as number, (args as any)?.endLine as number);
+          */
 
           case 'get_attribute':
             return await this.tools.getAttribute((args as any)?.instancePath as string, (args as any)?.attributeName as string);
