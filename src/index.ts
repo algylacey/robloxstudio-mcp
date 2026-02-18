@@ -593,7 +593,7 @@ class RobloxStudioMCPServer {
 
           {
             name: 'get_script_source',
-            description: 'Get the source code of a Roblox script (LocalScript, Script, or ModuleScript). Returns both "source" (raw code) and "numberedSource" (with line numbers prefixed like "1: code"). Use numberedSource to accurately identify line numbers for editing. For large scripts (>1500 lines), use startLine/endLine to read specific sections.',
+            description: 'Get the source code of a Roblox script (LocalScript, Script, or ModuleScript). Returns "source" (raw code) with startLine/endLine indicating the line range. For large scripts (>1000 lines), use startLine/endLine to read specific sections.',
             inputSchema: {
               type: 'object',
               properties: {
@@ -634,7 +634,7 @@ class RobloxStudioMCPServer {
 
           {
             name: 'edit_script_lines',
-            description: 'Replace specific lines in a Roblox script without rewriting the entire source. IMPORTANT: Use the "numberedSource" field from get_script_source to identify the correct line numbers. Lines are 1-indexed and ranges are inclusive.',
+            description: 'Replace specific lines in a Roblox script without rewriting the entire source. IMPORTANT: Use get_script_source with startLine/endLine to identify the correct line numbers. Lines are 1-indexed and ranges are inclusive.',
             inputSchema: {
               type: 'object',
               properties: {
@@ -644,11 +644,11 @@ class RobloxStudioMCPServer {
                 },
                 startLine: {
                   type: 'number',
-                  description: 'First line to replace (1-indexed). Get this from the "numberedSource" field.'
+                  description: 'First line to replace (1-indexed). Use get_script_source to determine line numbers.'
                 },
                 endLine: {
                   type: 'number',
-                  description: 'Last line to replace (inclusive). Get this from the "numberedSource" field.'
+                  description: 'Last line to replace (inclusive). Use get_script_source to determine line numbers.'
                 },
                 newContent: {
                   type: 'string',
@@ -660,7 +660,7 @@ class RobloxStudioMCPServer {
           },
           {
             name: 'insert_script_lines',
-            description: 'Insert new lines into a Roblox script at a specific position. IMPORTANT: Use the "numberedSource" field from get_script_source to identify the correct line numbers.',
+            description: 'Insert new lines into a Roblox script at a specific position. IMPORTANT: Use get_script_source with startLine/endLine to identify the correct line numbers.',
             inputSchema: {
               type: 'object',
               properties: {
@@ -670,7 +670,7 @@ class RobloxStudioMCPServer {
                 },
                 afterLine: {
                   type: 'number',
-                  description: 'Insert after this line number (0 = insert at very beginning, 1 = after first line). Get line numbers from "numberedSource".',
+                  description: 'Insert after this line number (0 = insert at very beginning, 1 = after first line). Use get_script_source to determine line numbers.',
                   default: 0
                 },
                 newContent: {
@@ -683,7 +683,7 @@ class RobloxStudioMCPServer {
           },
           {
             name: 'delete_script_lines',
-            description: 'Delete specific lines from a Roblox script. IMPORTANT: Use the "numberedSource" field from get_script_source to identify the correct line numbers.',
+            description: 'Delete specific lines from a Roblox script. IMPORTANT: Use get_script_source with startLine/endLine to identify the correct line numbers.',
             inputSchema: {
               type: 'object',
               properties: {
@@ -693,11 +693,11 @@ class RobloxStudioMCPServer {
                 },
                 startLine: {
                   type: 'number',
-                  description: 'First line to delete (1-indexed). Get this from the "numberedSource" field.'
+                  description: 'First line to delete (1-indexed). Use get_script_source to determine line numbers.'
                 },
                 endLine: {
                   type: 'number',
-                  description: 'Last line to delete (inclusive). Get this from the "numberedSource" field.'
+                  description: 'Last line to delete (inclusive). Use get_script_source to determine line numbers.'
                 }
               },
               required: ['instancePath', 'startLine', 'endLine']

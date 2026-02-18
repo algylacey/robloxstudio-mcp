@@ -215,7 +215,7 @@ function evaluateFormula(
 ): LuaTuple<[number, string | undefined]> {
 	let value = formula;
 
-	value = value.gsub("index", tostring(index))[0];
+	value = value.gsub("(%f[%w_])index(%f[^%w_])", tostring(index))[0];
 
 	if (instance && instance.IsA("BasePart")) {
 		const pos = instance.Position;
