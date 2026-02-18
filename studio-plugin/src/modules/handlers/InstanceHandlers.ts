@@ -23,7 +23,8 @@ function createObject(requestData: Record<string, unknown>) {
 
 		for (const [propertyName, propertyValue] of pairs(properties)) {
 			pcall(() => {
-				(instance as unknown as { [key: string]: unknown })[propertyName as string] = propertyValue;
+				const converted = convertPropertyValue(instance, propertyName as string, propertyValue);
+				(instance as unknown as { [key: string]: unknown })[propertyName as string] = converted !== undefined ? converted : propertyValue;
 			});
 		}
 

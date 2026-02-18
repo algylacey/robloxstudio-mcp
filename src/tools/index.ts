@@ -15,7 +15,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -27,7 +27,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -40,7 +40,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -52,7 +52,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -68,7 +68,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -84,7 +84,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -99,7 +99,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -117,7 +117,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -132,7 +132,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -149,7 +149,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -170,7 +170,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -189,7 +189,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -207,7 +207,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -227,7 +227,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -247,7 +247,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -262,7 +262,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -277,7 +277,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -292,7 +292,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -323,7 +323,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -351,7 +351,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -377,7 +377,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -405,7 +405,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -413,6 +413,17 @@ export class RobloxStudioTools {
 
 
   async getScriptSource(instancePath: string, startLine?: number, endLine?: number) {
+    // Disabled: Use ScriptSync + filesystem access instead for much lower token cost.
+    // To re-enable, uncomment the block below and remove the early return.
+    return {
+      content: [
+        {
+          type: 'text',
+          text: 'MCP Tool Disabled. Use the filesystem directly via ScriptSync to read script sources -- it is faster and uses far fewer tokens.'
+        }
+      ]
+    };
+    /*
     if (!instancePath) {
       throw new Error('Instance path is required for get_script_source');
     }
@@ -421,13 +432,25 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
+    */
   }
 
   async setScriptSource(instancePath: string, source: string) {
+    // Disabled: Use ScriptSync + filesystem access instead for much lower token cost.
+    // To re-enable, uncomment the block below and remove the early return.
+    return {
+      content: [
+        {
+          type: 'text',
+          text: 'MCP Tool Disabled. Use the filesystem directly via ScriptSync to edit script sources -- it is faster and uses far fewer tokens.'
+        }
+      ]
+    };
+    /*
     if (!instancePath || typeof source !== 'string') {
       throw new Error('Instance path and source code string are required for set_script_source');
     }
@@ -436,14 +459,26 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
+    */
   }
 
 
   async editScriptLines(instancePath: string, startLine: number, endLine: number, newContent: string) {
+    // Disabled: Use ScriptSync + filesystem access instead for much lower token cost.
+    // To re-enable, uncomment the block below and remove the early return.
+    return {
+      content: [
+        {
+          type: 'text',
+          text: 'MCP Tool Disabled. Use the filesystem directly via ScriptSync to edit script sources -- it is faster and uses far fewer tokens.'
+        }
+      ]
+    };
+    /*
     if (!instancePath || !startLine || !endLine || typeof newContent !== 'string') {
       throw new Error('Instance path, startLine, endLine, and newContent are required for edit_script_lines');
     }
@@ -452,13 +487,25 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
+    */
   }
 
   async insertScriptLines(instancePath: string, afterLine: number, newContent: string) {
+    // Disabled: Use ScriptSync + filesystem access instead for much lower token cost.
+    // To re-enable, uncomment the block below and remove the early return.
+    return {
+      content: [
+        {
+          type: 'text',
+          text: 'MCP Tool Disabled. Use the filesystem directly via ScriptSync to edit script sources -- it is faster and uses far fewer tokens.'
+        }
+      ]
+    };
+    /*
     if (!instancePath || typeof newContent !== 'string') {
       throw new Error('Instance path and newContent are required for insert_script_lines');
     }
@@ -467,13 +514,25 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
+    */
   }
 
   async deleteScriptLines(instancePath: string, startLine: number, endLine: number) {
+    // Disabled: Use ScriptSync + filesystem access instead for much lower token cost.
+    // To re-enable, uncomment the block below and remove the early return.
+    return {
+      content: [
+        {
+          type: 'text',
+          text: 'MCP Tool Disabled. Use the filesystem directly via ScriptSync to edit script sources -- it is faster and uses far fewer tokens.'
+        }
+      ]
+    };
+    /*
     if (!instancePath || !startLine || !endLine) {
       throw new Error('Instance path, startLine, and endLine are required for delete_script_lines');
     }
@@ -482,10 +541,11 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
+    */
   }
 
 
@@ -498,7 +558,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -513,7 +573,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -528,7 +588,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -543,7 +603,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -559,7 +619,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -574,7 +634,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -589,7 +649,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -604,7 +664,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -616,7 +676,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -631,7 +691,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -646,7 +706,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -658,7 +718,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };
@@ -670,7 +730,7 @@ export class RobloxStudioTools {
       content: [
         {
           type: 'text',
-          text: JSON.stringify(response, null, 2)
+          text: JSON.stringify(response)
         }
       ]
     };

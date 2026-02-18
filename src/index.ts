@@ -591,9 +591,12 @@ class RobloxStudioMCPServer {
             }
           },
 
+          // Script tools disabled: Use ScriptSync + filesystem access instead for much lower token cost.
+          // To re-enable, uncomment the tool definitions below.
+          /*
           {
             name: 'get_script_source',
-            description: 'Get the source code of a Roblox script (LocalScript, Script, or ModuleScript). Returns both "source" (raw code) and "numberedSource" (with line numbers prefixed like "1: code"). Use numberedSource to accurately identify line numbers for editing. For large scripts (>1500 lines), use startLine/endLine to read specific sections.',
+            description: 'Get the source code of a Roblox script (LocalScript, Script, or ModuleScript). Returns "source" (raw code) with startLine/endLine indicating the line range. For large scripts (>1000 lines), use startLine/endLine to read specific sections.',
             inputSchema: {
               type: 'object',
               properties: {
@@ -631,10 +634,9 @@ class RobloxStudioMCPServer {
               required: ['instancePath', 'source']
             }
           },
-
           {
             name: 'edit_script_lines',
-            description: 'Replace specific lines in a Roblox script without rewriting the entire source. IMPORTANT: Use the "numberedSource" field from get_script_source to identify the correct line numbers. Lines are 1-indexed and ranges are inclusive.',
+            description: 'Replace specific lines in a Roblox script without rewriting the entire source. IMPORTANT: Use get_script_source with startLine/endLine to identify the correct line numbers. Lines are 1-indexed and ranges are inclusive.',
             inputSchema: {
               type: 'object',
               properties: {
@@ -644,11 +646,11 @@ class RobloxStudioMCPServer {
                 },
                 startLine: {
                   type: 'number',
-                  description: 'First line to replace (1-indexed). Get this from the "numberedSource" field.'
+                  description: 'First line to replace (1-indexed). Use get_script_source to determine line numbers.'
                 },
                 endLine: {
                   type: 'number',
-                  description: 'Last line to replace (inclusive). Get this from the "numberedSource" field.'
+                  description: 'Last line to replace (inclusive). Use get_script_source to determine line numbers.'
                 },
                 newContent: {
                   type: 'string',
@@ -660,7 +662,7 @@ class RobloxStudioMCPServer {
           },
           {
             name: 'insert_script_lines',
-            description: 'Insert new lines into a Roblox script at a specific position. IMPORTANT: Use the "numberedSource" field from get_script_source to identify the correct line numbers.',
+            description: 'Insert new lines into a Roblox script at a specific position. IMPORTANT: Use get_script_source with startLine/endLine to identify the correct line numbers.',
             inputSchema: {
               type: 'object',
               properties: {
@@ -670,7 +672,7 @@ class RobloxStudioMCPServer {
                 },
                 afterLine: {
                   type: 'number',
-                  description: 'Insert after this line number (0 = insert at very beginning, 1 = after first line). Get line numbers from "numberedSource".',
+                  description: 'Insert after this line number (0 = insert at very beginning, 1 = after first line). Use get_script_source to determine line numbers.',
                   default: 0
                 },
                 newContent: {
@@ -683,7 +685,7 @@ class RobloxStudioMCPServer {
           },
           {
             name: 'delete_script_lines',
-            description: 'Delete specific lines from a Roblox script. IMPORTANT: Use the "numberedSource" field from get_script_source to identify the correct line numbers.',
+            description: 'Delete specific lines from a Roblox script. IMPORTANT: Use get_script_source with startLine/endLine to identify the correct line numbers.',
             inputSchema: {
               type: 'object',
               properties: {
@@ -693,16 +695,17 @@ class RobloxStudioMCPServer {
                 },
                 startLine: {
                   type: 'number',
-                  description: 'First line to delete (1-indexed). Get this from the "numberedSource" field.'
+                  description: 'First line to delete (1-indexed). Use get_script_source to determine line numbers.'
                 },
                 endLine: {
                   type: 'number',
-                  description: 'Last line to delete (inclusive). Get this from the "numberedSource" field.'
+                  description: 'Last line to delete (inclusive). Use get_script_source to determine line numbers.'
                 }
               },
               required: ['instancePath', 'startLine', 'endLine']
             }
           },
+          */
 
           {
             name: 'get_attribute',
@@ -962,17 +965,20 @@ class RobloxStudioMCPServer {
           case 'set_relative_property':
             return await this.tools.setRelativeProperty((args as any)?.paths as string[], (args as any)?.propertyName as string, (args as any)?.operation, (args as any)?.value, (args as any)?.component);
 
+          // Script tool handlers disabled: Use ScriptSync + filesystem access instead.
+          // To re-enable, uncomment the cases below (and the tool definitions above).
+          /*
           case 'get_script_source':
             return await this.tools.getScriptSource((args as any)?.instancePath as string, (args as any)?.startLine, (args as any)?.endLine);
           case 'set_script_source':
             return await this.tools.setScriptSource((args as any)?.instancePath as string, (args as any)?.source as string);
-
           case 'edit_script_lines':
             return await this.tools.editScriptLines((args as any)?.instancePath as string, (args as any)?.startLine as number, (args as any)?.endLine as number, (args as any)?.newContent as string);
           case 'insert_script_lines':
             return await this.tools.insertScriptLines((args as any)?.instancePath as string, (args as any)?.afterLine as number, (args as any)?.newContent as string);
           case 'delete_script_lines':
             return await this.tools.deleteScriptLines((args as any)?.instancePath as string, (args as any)?.startLine as number, (args as any)?.endLine as number);
+          */
 
           case 'get_attribute':
             return await this.tools.getAttribute((args as any)?.instancePath as string, (args as any)?.attributeName as string);
@@ -1023,7 +1029,7 @@ class RobloxStudioMCPServer {
   async run() {
     const basePort = process.env.ROBLOX_STUDIO_PORT ? parseInt(process.env.ROBLOX_STUDIO_PORT) : 58741;
     const maxPort = basePort + 4;
-    const host = process.env.ROBLOX_STUDIO_HOST || '0.0.0.0';
+    const host = process.env.ROBLOX_STUDIO_HOST || '127.0.0.1';
     const httpServer = createHttpServer(this.tools, this.bridge);
 
     let boundPort = 0;

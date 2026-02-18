@@ -7,10 +7,11 @@ const { getInstancePath, getInstanceByPath, readScriptSource, splitLines, joinLi
 
 function normalizeEscapes(s: string): string {
 	let result = s;
+	result = result.gsub("\\\\", "\x00")[0];
 	result = result.gsub("\\n", "\n")[0];
 	result = result.gsub("\\t", "\t")[0];
 	result = result.gsub("\\r", "\r")[0];
-	result = result.gsub("\\\\", "\\")[0];
+	result = result.gsub("\x00", "\\")[0];
 	return result;
 }
 
@@ -53,21 +54,10 @@ function getScriptSource(requestData: Record<string, unknown>) {
 			returnedEndLine = actualEndLine;
 		}
 
-		const numberedLines: string[] = [];
-		const linesToNumber = startLine !== undefined ? splitLines(sourceToReturn)[0] : lines;
-		const lineOffset = returnedStartLine - 1;
-		for (let i = 0; i < linesToNumber.size(); i++) {
-			numberedLines.push(`${i + 1 + lineOffset}: ${linesToNumber[i]}`);
-		}
-		const numberedSource = numberedLines.join("\n");
-
 		const resp: Record<string, unknown> = {
-			instancePath,
 			className: instance.ClassName,
 			name: instance.Name,
 			source: sourceToReturn,
-			numberedSource,
-			sourceLength: fullSource.size(),
 			lineCount: totalLineCount,
 			startLine: returnedStartLine,
 			endLine: returnedEndLine,
@@ -77,14 +67,11 @@ function getScriptSource(requestData: Record<string, unknown>) {
 
 		if (startLine === undefined && endLine === undefined && fullSource.size() > 50000) {
 			const truncatedLines: string[] = [];
-			const truncatedNumberedLines: string[] = [];
 			const maxLines = math.min(1000, lines.size());
 			for (let i = 0; i < maxLines; i++) {
 				truncatedLines.push(lines[i]);
-				truncatedNumberedLines.push(`${i + 1}: ${lines[i]}`);
 			}
 			resp.source = truncatedLines.join("\n");
-			resp.numberedSource = truncatedNumberedLines.join("\n");
 			resp.truncated = true;
 			resp.endLine = maxLines;
 			resp.note = "Script truncated to first 1000 lines. Use startLine/endLine parameters to read specific sections.";
