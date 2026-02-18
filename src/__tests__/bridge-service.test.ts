@@ -52,15 +52,25 @@ describe('BridgeService', () => {
       await expect(requestPromise).rejects.toEqual(error);
     });
 
-    test('should timeout request after 30 seconds', async () => {
+    test('should timeout request after 60 seconds', async () => {
       const endpoint = '/api/test';
       const data = { test: 'data' };
 
       const requestPromise = bridgeService.sendRequest(endpoint, data);
 
-      jest.advanceTimersByTime(31000);
+      jest.advanceTimersByTime(61000);
 
       await expect(requestPromise).rejects.toThrow('Request timeout');
+    });
+
+    test('should not return already dispatched request', async () => {
+      bridgeService.sendRequest('/api/test1', { order: 1 });
+
+      const first = bridgeService.getPendingRequest();
+      expect(first?.request.data.order).toBe(1);
+
+      const second = bridgeService.getPendingRequest();
+      expect(second).toBeNull();
     });
   });
 
@@ -73,7 +83,7 @@ describe('BridgeService', () => {
         bridgeService.sendRequest('/api/test3', {})
       ];
 
-      jest.advanceTimersByTime(31000);
+      jest.advanceTimersByTime(61000);
 
       bridgeService.cleanupOldRequests();
 

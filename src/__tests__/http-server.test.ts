@@ -41,7 +41,7 @@ describe('HTTP Server', () => {
         .post('/ready')
         .expect(200);
 
-      expect(response.body).toEqual({ success: true });
+      expect(response.body).toMatchObject({ success: true });
       expect(app.isPluginConnected()).toBe(true);
     });
 
@@ -78,7 +78,7 @@ describe('HTTP Server', () => {
       expect(app.isPluginConnected()).toBe(true);
 
       const originalDateNow = Date.now;
-      Date.now = jest.fn(() => originalDateNow() + 11000);
+      Date.now = jest.fn(() => originalDateNow() + 31000);
 
       expect(app.isPluginConnected()).toBe(false);
 
@@ -190,25 +190,14 @@ describe('HTTP Server', () => {
   });
 
   describe('MCP Server State Management', () => {
-    test('should track MCP server activity', async () => {
-      app.setMCPServerActive(true);
-      expect(app.isMCPServerActive()).toBe(true);
-
-      app.trackMCPActivity();
-
-      expect(app.isMCPServerActive()).toBe(true);
-    });
-
-    test('should timeout MCP server after inactivity', async () => {
-      app.setMCPServerActive(true);
-      expect(app.isMCPServerActive()).toBe(true);
-
-      const originalDateNow = Date.now;
-      Date.now = jest.fn(() => originalDateNow() + 16000);
-
+    test('should track MCP server active state', async () => {
       expect(app.isMCPServerActive()).toBe(false);
 
-      Date.now = originalDateNow;
+      app.setMCPServerActive(true);
+      expect(app.isMCPServerActive()).toBe(true);
+
+      app.setMCPServerActive(false);
+      expect(app.isMCPServerActive()).toBe(false);
     });
   });
 
@@ -226,7 +215,7 @@ describe('HTTP Server', () => {
         pluginConnected: true,
         mcpServerActive: true
       });
-      expect(response.body.lastMCPActivity).toBeGreaterThan(0);
+      expect(response.body.lastPluginActivity).toBeGreaterThan(0);
       expect(response.body.uptime).toBeGreaterThan(0);
     });
   });

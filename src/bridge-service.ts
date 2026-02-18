@@ -8,11 +8,14 @@ interface PendingRequest {
   resolve: (value: any) => void;
   reject: (error: any) => void;
   timeoutId: ReturnType<typeof setTimeout>;
+  dispatched: boolean;
+  dispatchedAt: number;
 }
 
 export class BridgeService {
   private pendingRequests: Map<string, PendingRequest> = new Map();
-  private requestTimeout = 30000;
+  private requestTimeout = 60000;
+  private dispatchStaleTimeout = 45000;
 
   async sendRequest(endpoint: string, data: any): Promise<any> {
     const requestId = uuidv4();
@@ -33,7 +36,9 @@ export class BridgeService {
         timestamp: Date.now(),
         resolve,
         reject,
-        timeoutId
+        timeoutId,
+        dispatched: false,
+        dispatchedAt: 0
       };
 
       this.pendingRequests.set(requestId, request);
@@ -43,14 +48,25 @@ export class BridgeService {
   getPendingRequest(): { requestId: string; request: { endpoint: string; data: any } } | null {
 
     let oldestRequest: PendingRequest | null = null;
+    const now = Date.now();
 
     for (const request of this.pendingRequests.values()) {
+      if (request.dispatched) {
+        if (now - request.dispatchedAt > this.dispatchStaleTimeout) {
+          request.dispatched = false;
+          request.dispatchedAt = 0;
+        } else {
+          continue;
+        }
+      }
       if (!oldestRequest || request.timestamp < oldestRequest.timestamp) {
         oldestRequest = request;
       }
     }
 
     if (oldestRequest) {
+      oldestRequest.dispatched = true;
+      oldestRequest.dispatchedAt = now;
       return {
         requestId: oldestRequest.id,
         request: {
@@ -98,5 +114,17 @@ export class BridgeService {
       request.reject(new Error('Connection closed'));
     }
     this.pendingRequests.clear();
+  }
+
+  getPendingCount(): number {
+    return this.pendingRequests.size;
+  }
+
+  getDispatchedCount(): number {
+    let count = 0;
+    for (const request of this.pendingRequests.values()) {
+      if (request.dispatched) count++;
+    }
+    return count;
   }
 }

@@ -1095,29 +1095,56 @@ class RobloxStudioMCPServer {
     console.error('Roblox Studio MCP server running on stdio');
 
     (httpServer as any).setMCPServerActive(true);
+    if (legacyServer) (legacyServer as any).setMCPServerActive(true);
     console.error('MCP server marked as active');
+
+    this.server.onclose = () => {
+      console.error('MCP transport closed, marking server as inactive');
+      (httpServer as any).setMCPServerActive(false);
+      if (legacyServer) (legacyServer as any).setMCPServerActive(false);
+    };
 
     console.error('Waiting for Studio plugin to connect...');
 
+    let lastLoggedState = '';
     setInterval(() => {
-      (httpServer as any).trackMCPActivity();
-      if (legacyServer) (legacyServer as any).trackMCPActivity();
       const pluginConnected = (httpServer as any).isPluginConnected();
       const mcpActive = (httpServer as any).isMCPServerActive();
+      const pending = this.bridge.getPendingCount();
+      const dispatched = this.bridge.getDispatchedCount();
 
+      let state = '';
       if (pluginConnected && mcpActive) {
+        state = 'connected';
       } else if (pluginConnected && !mcpActive) {
-        console.error('Studio plugin connected, but MCP server inactive');
+        state = 'plugin-only';
       } else if (!pluginConnected && mcpActive) {
-        console.error('MCP server active, waiting for Studio plugin...');
+        state = 'mcp-only';
       } else {
-        console.error('Waiting for connections...');
+        state = 'waiting';
+      }
+
+      if (state !== lastLoggedState) {
+        if (state === 'connected') {
+          console.error('All systems connected (Studio plugin + MCP server)');
+        } else if (state === 'plugin-only') {
+          console.error('Studio plugin connected, but MCP server inactive');
+        } else if (state === 'mcp-only') {
+          console.error('MCP server active, waiting for Studio plugin...');
+        } else {
+          console.error('Waiting for connections...');
+        }
+        lastLoggedState = state;
+      }
+
+      if (pending > 0 || dispatched > 0) {
+        console.error(`Requests: ${pending} pending, ${dispatched} dispatched`);
       }
     }, 5000);
 
     setInterval(() => {
       this.bridge.cleanupOldRequests();
-    }, 5000);
+    }, 10000);
   }
 }
 
