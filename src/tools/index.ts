@@ -413,6 +413,17 @@ export class RobloxStudioTools {
 
 
   async getScriptSource(instancePath: string, startLine?: number, endLine?: number) {
+    // Disabled: Use ScriptSync + filesystem access instead for much lower token cost.
+    // To re-enable, uncomment the block below and remove the early return.
+    return {
+      content: [
+        {
+          type: 'text',
+          text: 'MCP Tool Disabled. Use the filesystem directly via ScriptSync to read script sources -- it is faster and uses far fewer tokens.'
+        }
+      ]
+    };
+    /*
     if (!instancePath) {
       throw new Error('Instance path is required for get_script_source');
     }
@@ -425,6 +436,7 @@ export class RobloxStudioTools {
         }
       ]
     };
+    */
   }
 
   async setScriptSource(instancePath: string, source: string) {
