@@ -7,38 +7,24 @@ export function createHttpServer(tools: RobloxStudioTools, bridge: BridgeService
   const app = express();
   let pluginConnected = false;
   let mcpServerActive = false;
-  let lastMCPActivity = 0;
   let mcpServerStartTime = 0;
   let lastPluginActivity = 0;
-
 
   const setMCPServerActive = (active: boolean) => {
     mcpServerActive = active;
     if (active) {
       mcpServerStartTime = Date.now();
-      lastMCPActivity = Date.now();
     } else {
       mcpServerStartTime = 0;
-      lastMCPActivity = 0;
-    }
-  };
-
-  const trackMCPActivity = () => {
-    if (mcpServerActive) {
-      lastMCPActivity = Date.now();
     }
   };
 
   const isMCPServerActive = () => {
-    if (!mcpServerActive) return false;
-    const now = Date.now();
-    const mcpRecent = (now - lastMCPActivity) < 15000;
-    return mcpRecent;
+    return mcpServerActive;
   };
 
   const isPluginConnected = () => {
-
-    return pluginConnected && (Date.now() - lastPluginActivity < 10000);
+    return pluginConnected && (Date.now() - lastPluginActivity < 30000);
   };
 
   app.use(cors());
@@ -50,26 +36,32 @@ export function createHttpServer(tools: RobloxStudioTools, bridge: BridgeService
     res.json({
       status: 'ok',
       service: 'robloxstudio-mcp',
-      pluginConnected,
+      pluginConnected: isPluginConnected(),
       mcpServerActive: isMCPServerActive(),
+      pendingRequests: bridge.getPendingCount(),
+      dispatchedRequests: bridge.getDispatchedCount(),
       uptime: mcpServerActive ? Date.now() - mcpServerStartTime : 0
     });
   });
 
 
   app.post('/ready', (req, res) => {
-
-
+    const wasConnected = pluginConnected;
     bridge.clearAllPendingRequests();
     pluginConnected = true;
     lastPluginActivity = Date.now();
-    res.json({ success: true });
+    if (wasConnected) {
+      console.error('Studio plugin reconnected (was already connected)');
+    } else {
+      console.error('Studio plugin connected');
+    }
+    res.json({ success: true, mcpServerActive: isMCPServerActive() });
   });
 
 
   app.post('/disconnect', (req, res) => {
     pluginConnected = false;
-
+    console.error('Studio plugin disconnected');
     bridge.clearAllPendingRequests();
     res.json({ success: true });
   });
@@ -79,7 +71,7 @@ export function createHttpServer(tools: RobloxStudioTools, bridge: BridgeService
     res.json({
       pluginConnected: isPluginConnected(),
       mcpServerActive: isMCPServerActive(),
-      lastMCPActivity,
+      lastPluginActivity,
       uptime: mcpServerActive ? Date.now() - mcpServerStartTime : 0
     });
   });
@@ -135,7 +127,7 @@ export function createHttpServer(tools: RobloxStudioTools, bridge: BridgeService
 
 
   app.use('/mcp/*', (req, res, next) => {
-    trackMCPActivity();
+    lastPluginActivity = Date.now();
     next();
   });
 
@@ -516,7 +508,6 @@ export function createHttpServer(tools: RobloxStudioTools, bridge: BridgeService
   (app as any).isPluginConnected = isPluginConnected;
   (app as any).setMCPServerActive = setMCPServerActive;
   (app as any).isMCPServerActive = isMCPServerActive;
-  (app as any).trackMCPActivity = trackMCPActivity;
 
   return app;
 }

@@ -196,7 +196,7 @@ describe('Integration Tests', () => {
 
       await request(app).get('/poll').expect(200);
 
-      jest.advanceTimersByTime(31000);
+      jest.advanceTimersByTime(61000);
 
       await expect(timeoutPromise).rejects.toThrow('Request timeout');
 

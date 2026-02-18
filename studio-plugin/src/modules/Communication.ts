@@ -73,14 +73,22 @@ function processRequest(request: RequestPayload): unknown {
 }
 
 function sendResponse(conn: Connection, requestId: string, responseData: unknown) {
-	pcall(() => {
-		HttpService.RequestAsync({
-			Url: `${conn.serverUrl}/response`,
-			Method: "POST",
-			Headers: { "Content-Type": "application/json" },
-			Body: HttpService.JSONEncode({ requestId, response: responseData }),
+	const maxRetries = 3;
+	const body = HttpService.JSONEncode({ requestId, response: responseData });
+	for (let attempt = 0; attempt < maxRetries; attempt++) {
+		const [ok] = pcall(() => {
+			HttpService.RequestAsync({
+				Url: `${conn.serverUrl}/response`,
+				Method: "POST",
+				Headers: { "Content-Type": "application/json" },
+				Body: body,
+			});
 		});
-	});
+		if (ok) return;
+		if (attempt < maxRetries - 1) {
+			task.wait(0.5 * (attempt + 1));
+		}
+	}
 }
 
 function getConnectionStatus(connIndex: number): string {
@@ -241,6 +249,7 @@ function pollForRequests(connIndex: number) {
 }
 
 function discoverPort(): number | undefined {
+	let firstAvailable: number | undefined;
 	for (let offset = 0; offset < 5; offset++) {
 		const port = State.BASE_PORT + offset;
 		const [success, result] = pcall(() => {
@@ -252,13 +261,20 @@ function discoverPort(): number | undefined {
 		});
 
 		if (success && result.Success) {
-			const [ok, data] = pcall(() => HttpService.JSONDecode(result.Body) as { pluginConnected: boolean });
-			if (ok && data.pluginConnected === false) {
-				return port;
+			const [ok, data] = pcall(() =>
+				HttpService.JSONDecode(result.Body) as { pluginConnected: boolean; mcpServerActive: boolean },
+			);
+			if (ok) {
+				if (data.pluginConnected === false && data.mcpServerActive === true) {
+					return port;
+				}
+				if (firstAvailable === undefined && data.mcpServerActive === true) {
+					firstAvailable = port;
+				}
 			}
 		}
 	}
-	return undefined;
+	return firstAvailable;
 }
 
 function activatePlugin(connIndex?: number) {
@@ -281,17 +297,6 @@ function activatePlugin(connIndex?: number) {
 	}
 	UI.updateTabDot(idx);
 
-	if (!conn.heartbeatConnection) {
-		conn.heartbeatConnection = RunService.Heartbeat.Connect(() => {
-			const now = tick();
-			const currentInterval = conn.consecutiveFailures > 5 ? conn.currentRetryDelay : conn.pollInterval;
-			if (now - conn.lastPoll > currentInterval) {
-				conn.lastPoll = now;
-				pollForRequests(idx);
-			}
-		});
-	}
-
 	task.spawn(() => {
 		const discoveredPort = discoverPort();
 		if (discoveredPort !== undefined) {
@@ -310,6 +315,18 @@ function activatePlugin(connIndex?: number) {
 				Body: HttpService.JSONEncode({ pluginReady: true, timestamp: tick() }),
 			});
 		});
+
+		if (!conn.heartbeatConnection) {
+			conn.heartbeatConnection = RunService.Heartbeat.Connect(() => {
+				if (!conn.isActive) return;
+				const now = tick();
+				const currentInterval = conn.consecutiveFailures > 5 ? conn.currentRetryDelay : conn.pollInterval;
+				if (now - conn.lastPoll > currentInterval) {
+					conn.lastPoll = now;
+					pollForRequests(idx);
+				}
+			});
+		}
 	});
 }
 
