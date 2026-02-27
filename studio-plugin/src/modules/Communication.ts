@@ -283,8 +283,9 @@ function discoverPort(): number | undefined {
 					placeIdMatch = port;
 				}
 
-				// Unclaimed: no plugin connected, no placeId restriction
-				if (data.pluginConnected === false && firstUnclaimed === undefined) {
+				// Unclaimed: no plugin connected AND server has no placeId restriction
+				// (servers with expectedPlaceId are reserved for their specific place)
+				if (data.pluginConnected === false && data.expectedPlaceId === undefined && firstUnclaimed === undefined) {
 					firstUnclaimed = port;
 				}
 
