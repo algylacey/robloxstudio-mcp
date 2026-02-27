@@ -3,12 +3,13 @@ import cors from 'cors';
 import { RobloxStudioTools } from './tools/index.js';
 import { BridgeService } from './bridge-service.js';
 
-export function createHttpServer(tools: RobloxStudioTools, bridge: BridgeService) {
+export function createHttpServer(tools: RobloxStudioTools, bridge: BridgeService, expectedPlaceId: string = '') {
   const app = express();
   let pluginConnected = false;
   let mcpServerActive = false;
   let mcpServerStartTime = 0;
   let lastPluginActivity = 0;
+  let connectedPlaceId = '';
 
   const setMCPServerActive = (active: boolean) => {
     mcpServerActive = active;
@@ -45,6 +46,8 @@ export function createHttpServer(tools: RobloxStudioTools, bridge: BridgeService
       service: 'robloxstudio-mcp',
       pluginConnected: isPluginConnected(),
       mcpServerActive: isMCPServerActive(),
+      expectedPlaceId: expectedPlaceId || undefined,
+      connectedPlaceId: connectedPlaceId || undefined,
       pendingRequests: bridge.getPendingCount(),
       dispatchedRequests: bridge.getDispatchedCount(),
       uptime: mcpServerActive ? Date.now() - mcpServerStartTime : 0
@@ -57,12 +60,20 @@ export function createHttpServer(tools: RobloxStudioTools, bridge: BridgeService
     bridge.clearAllPendingRequests();
     pluginConnected = true;
     lastPluginActivity = Date.now();
+
+    // Store the plugin's placeId if provided
+    const pluginPlaceId = req.body?.placeId ? String(req.body.placeId) : '';
+    if (pluginPlaceId) {
+      connectedPlaceId = pluginPlaceId;
+      console.error(`Studio plugin placeId: ${pluginPlaceId}`);
+    }
+
     if (wasConnected) {
       console.error('Studio plugin reconnected (was already connected)');
     } else {
       console.error('Studio plugin connected');
     }
-    res.json({ success: true, mcpServerActive: isMCPServerActive() });
+    res.json({ success: true, mcpServerActive: isMCPServerActive(), expectedPlaceId: expectedPlaceId || undefined });
   });
 
 
@@ -78,6 +89,8 @@ export function createHttpServer(tools: RobloxStudioTools, bridge: BridgeService
     res.json({
       pluginConnected: isPluginConnected(),
       mcpServerActive: isMCPServerActive(),
+      expectedPlaceId: expectedPlaceId || undefined,
+      connectedPlaceId: connectedPlaceId || undefined,
       lastPluginActivity,
       uptime: mcpServerActive ? Date.now() - mcpServerStartTime : 0
     });

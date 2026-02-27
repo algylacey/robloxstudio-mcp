@@ -33,3 +33,9 @@ plugin.Unloading.Connect(() => {
 
 UI.updateUIState();
 Communication.checkForUpdates();
+
+// Auto-connect on plugin load — activatePlugin starts a persistent heartbeat
+// polling loop that retries with backoff, so a single call is sufficient.
+// The plugin will keep attempting to discover and connect to an MCP server
+// until one becomes available (polls every ~1s, backing off on repeated failures).
+Communication.activatePlugin(0);

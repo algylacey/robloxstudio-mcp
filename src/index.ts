@@ -1030,7 +1030,11 @@ class RobloxStudioMCPServer {
     const basePort = process.env.ROBLOX_STUDIO_PORT ? parseInt(process.env.ROBLOX_STUDIO_PORT) : 58741;
     const maxPort = basePort + 4;
     const host = process.env.ROBLOX_STUDIO_HOST || '127.0.0.1';
-    const httpServer = createHttpServer(this.tools, this.bridge);
+    const expectedPlaceId = process.env.ROBLOX_PLACE_ID || '';
+    if (expectedPlaceId) {
+      console.error(`Expecting Studio plugin for placeId: ${expectedPlaceId}`);
+    }
+    const httpServer = createHttpServer(this.tools, this.bridge, expectedPlaceId);
 
     let boundPort = 0;
     for (let port = basePort; port <= maxPort; port++) {
@@ -1068,7 +1072,7 @@ class RobloxStudioMCPServer {
     const LEGACY_PORT = 3002;
     let legacyServer: ReturnType<typeof createHttpServer> | undefined;
     if (boundPort !== LEGACY_PORT) {
-      const legacy = createHttpServer(this.tools, this.bridge);
+      const legacy = createHttpServer(this.tools, this.bridge, expectedPlaceId);
       legacyServer = legacy;
       try {
         await new Promise<void>((resolve, reject) => {
