@@ -79,6 +79,7 @@ export function createHttpServer(tools: RobloxStudioTools, bridge: BridgeService
 
   app.post('/disconnect', (req, res) => {
     pluginConnected = false;
+    connectedPlaceId = '';
     console.error('Studio plugin disconnected');
     bridge.clearAllPendingRequests();
     res.json({ success: true });
