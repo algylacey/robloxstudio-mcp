@@ -289,8 +289,8 @@ function discoverPort(): number | undefined {
 					firstUnclaimed = port;
 				}
 
-				// Fallback: any active server
-				if (firstAvailable === undefined) {
+				// Fallback: any active server that isn't reserved for a different place
+				if ((data.expectedPlaceId === undefined || data.expectedPlaceId === myPlaceId) && firstAvailable === undefined) {
 					firstAvailable = port;
 				}
 			}
