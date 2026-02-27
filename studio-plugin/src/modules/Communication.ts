@@ -249,7 +249,11 @@ function pollForRequests(connIndex: number) {
 }
 
 function discoverPort(): number | undefined {
+	const myPlaceId = tostring(game.PlaceId);
+	let placeIdMatch: number | undefined;
+	let firstUnclaimed: number | undefined;
 	let firstAvailable: number | undefined;
+
 	for (let offset = 0; offset < 5; offset++) {
 		const port = State.BASE_PORT + offset;
 		const [success, result] = pcall(() => {
@@ -262,19 +266,39 @@ function discoverPort(): number | undefined {
 
 		if (success && result.Success) {
 			const [ok, data] = pcall(() =>
-				HttpService.JSONDecode(result.Body) as { pluginConnected: boolean; mcpServerActive: boolean },
+				HttpService.JSONDecode(result.Body) as {
+					pluginConnected: boolean;
+					mcpServerActive: boolean;
+					expectedPlaceId?: string;
+				},
 			);
-			if (ok) {
-				if (data.pluginConnected === false && data.mcpServerActive === true) {
-					return port;
+			if (ok && data.mcpServerActive === true) {
+				// Best match: server expects this exact placeId and no plugin connected yet
+				if (data.expectedPlaceId !== undefined && data.expectedPlaceId === myPlaceId && data.pluginConnected === false) {
+					return port; // Immediate return — perfect match
 				}
-				if (firstAvailable === undefined && data.mcpServerActive === true) {
+
+				// Track placeId match even if already connected (for reconnection)
+				if (data.expectedPlaceId !== undefined && data.expectedPlaceId === myPlaceId && placeIdMatch === undefined) {
+					placeIdMatch = port;
+				}
+
+				// Unclaimed: no plugin connected AND server has no placeId restriction
+				// (servers with expectedPlaceId are reserved for their specific place)
+				if (data.pluginConnected === false && data.expectedPlaceId === undefined && firstUnclaimed === undefined) {
+					firstUnclaimed = port;
+				}
+
+				// Fallback: any active server that isn't reserved for a different place
+				if ((data.expectedPlaceId === undefined || data.expectedPlaceId === myPlaceId) && firstAvailable === undefined) {
 					firstAvailable = port;
 				}
 			}
 		}
 	}
-	return firstAvailable;
+
+	// Priority: placeId match > unclaimed > any available
+	return placeIdMatch ?? firstUnclaimed ?? firstAvailable;
 }
 
 function activatePlugin(connIndex?: number) {
@@ -312,7 +336,7 @@ function activatePlugin(connIndex?: number) {
 				Url: `${conn.serverUrl}/ready`,
 				Method: "POST",
 				Headers: { "Content-Type": "application/json" },
-				Body: HttpService.JSONEncode({ pluginReady: true, timestamp: tick() }),
+				Body: HttpService.JSONEncode({ pluginReady: true, placeId: tostring(game.PlaceId), timestamp: tick() }),
 			});
 		});
 
